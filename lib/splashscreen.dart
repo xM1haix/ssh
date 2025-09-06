@@ -1,11 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:local_auth/local_auth.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:toast/toast.dart';
+import "dart:async";
 
-import 'adaptive.dart';
-import 'ssh.dart';
+import "package:flutter/material.dart";
+import "package:flutter/services.dart";
+import "package:local_auth/local_auth.dart";
+import "package:shared_preferences/shared_preferences.dart";
+import "package:tefis_tool/adaptive.dart";
+import "package:tefis_tool/ssh.dart";
+import "package:toast/toast.dart";
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -15,27 +16,27 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   late SharedPreferences prefs;
-  late bool touchIdUnlock = false;
-  late bool fingerPrint = false;
-  @override
-  void initState() {
-    super.initState();
-    getPrefs();
-    ToastContext().init(context);
+  late var touchIdUnlock = false;
+  late var fingerPrint = false;
+  var reset = 0;
+
+  Future auth() async {
+    await Future.delayed(const Duration(seconds: 1));
+    if (touchIdUnlock && fingerPrint) {
+      final authenticated = await getFingerPrint();
+      if (authenticated) {
+        await nav();
+      }
+      if (reset == 117) {
+        await prefs.setBool("touchIdUnlock", false);
+        await prefs.setBool("fingerPrint", false);
+        await nav();
+      }
+    } else {
+      await nav();
+    }
   }
 
-  void getPrefs() async {
-    prefs = await SharedPreferences.getInstance();
-    final LocalAuthentication auth = LocalAuthentication();
-    await prefs.setBool('fingerPrint',
-        await auth.canCheckBiometrics && await auth.isDeviceSupported());
-    setState(() {
-      touchIdUnlock = prefs.getBool('touchIdUnlock') ?? false;
-      fingerPrint = prefs.getBool('fingerPrint') ?? false;
-    });
-  }
-
-  int reset = 0;
   @override
   Widget build(BuildContext context) => Scaffold(
         backgroundColor: Colors.black,
@@ -50,10 +51,12 @@ class _SplashScreenState extends State<SplashScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Spacer(),
-                  const Text('Welcome!'),
+                  const Text("Welcome!"),
                   SizedBox(height: adaptive(10, context)),
                   CircularProgressIndicator(
-                      color: Colors.white, strokeWidth: adaptive(2, context)),
+                    color: Colors.white,
+                    strokeWidth: adaptive(2, context),
+                  ),
                   const Spacer(),
                 ],
               ),
@@ -64,32 +67,40 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<bool> getFingerPrint() async {
     try {
       return await LocalAuthentication().authenticate(
-          localizedReason: 'Check the fingerprint!',
-          options: const AuthenticationOptions(biometricOnly: true));
+        localizedReason: "Check the fingerprint!",
+        options: const AuthenticationOptions(biometricOnly: true),
+      );
     } on PlatformException catch (e) {
-      Toast.show(e.message.toString(), duration: 3, gravity: Toast.bottom);
+      Toast.show(e.message.toString(), duration: 3);
       return false;
     }
   }
 
-  Future auth() async {
-    await Future.delayed(const Duration(seconds: 1));
-    if (touchIdUnlock && fingerPrint) {
-      bool authenticated = await getFingerPrint();
-      if (authenticated) nav();
-      if (reset == 117) {
-        await prefs.setBool('touchIdUnlock', false);
-        await prefs.setBool('fingerPrint', false);
-        nav();
-      }
-    } else {
-      nav();
-    }
+  Future<void> getPrefs() async {
+    prefs = await SharedPreferences.getInstance();
+    final auth = LocalAuthentication();
+    await prefs.setBool(
+      "fingerPrint",
+      await auth.canCheckBiometrics && await auth.isDeviceSupported(),
+    );
+    setState(() {
+      touchIdUnlock = prefs.getBool("touchIdUnlock") ?? false;
+      fingerPrint = prefs.getBool("fingerPrint") ?? false;
+    });
   }
 
-  nav() {
-    if (!mounted) return;
-    Navigator.pushReplacement(
+  @override
+  void initState() {
+    super.initState();
+    unawaited(getPrefs());
+    ToastContext().init(context);
+  }
+
+  Future<void> nav() async {
+    if (!mounted) {
+      return;
+    }
+    await Navigator.pushReplacement(
       context,
       PageRouteBuilder(
         transitionDuration: const Duration(seconds: 1),

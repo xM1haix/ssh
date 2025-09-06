@@ -1,47 +1,25 @@
-import 'package:flutter/material.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
-import 'custom_input.dart';
+import "dart:async";
+
+import "package:flutter/material.dart";
+import "package:path/path.dart";
+import "package:sqflite/sqflite.dart";
+import "package:tefis_tool/custom_input.dart";
 
 class NewSsh extends StatefulWidget {
-  final int? id;
   const NewSsh({this.id, super.key});
+  final int? id;
 
   @override
   State<NewSsh> createState() => _NewSshState();
 }
 
 class _NewSshState extends State<NewSsh> {
-  final TextEditingController name = TextEditingController();
-  final TextEditingController host = TextEditingController();
-  final TextEditingController port = TextEditingController();
-  final TextEditingController username = TextEditingController();
-  final TextEditingController password = TextEditingController();
-  bool isHide = true;
-  @override
-  void initState() {
-    super.initState();
-    if (widget.id != null) {
-      loadSshDetails();
-    }
-  }
-
-  void loadSshDetails() async {
-    final db =
-        await openDatabase(join(await getDatabasesPath(), 'my_database.db'));
-    final List<Map<String, dynamic>> maps =
-        await db.query('ssh_details', where: 'id = ?', whereArgs: [widget.id]);
-    if (maps.isNotEmpty) {
-      setState(() {
-        name.text = maps[0]['name'];
-        host.text = maps[0]['host'];
-        port.text = maps[0]['port'].toString();
-        username.text = maps[0]['username'];
-        password.text = maps[0]['password'];
-      });
-    }
-  }
-
+  final name = TextEditingController();
+  final host = TextEditingController();
+  final port = TextEditingController();
+  final username = TextEditingController();
+  final password = TextEditingController();
+  var isHide = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,31 +28,37 @@ class _NewSshState extends State<NewSsh> {
           TextButton.icon(
             onPressed: () async {
               final ssh = {
-                'name': name.text,
-                'host': host.text,
-                'port': int.parse(port.text),
-                'username': username.text,
-                'password': password.text,
+                "name": name.text,
+                "host": host.text,
+                "port": int.parse(port.text),
+                "username": username.text,
+                "password": password.text,
               };
               final db = await openDatabase(
-                join(await getDatabasesPath(), 'my_database.db'),
+                join(await getDatabasesPath(), "my_database.db"),
                 version: 1,
               );
               await (widget.id == null
-                  ? db.insert('ssh_details', ssh)
-                  : db.update('ssh_details', ssh,
-                      where: 'id = ?', whereArgs: [widget.id]));
+                  ? db.insert("ssh_details", ssh)
+                  : db.update(
+                      "ssh_details",
+                      ssh,
+                      where: "id = ?",
+                      whereArgs: [widget.id],
+                    ));
 
-              if (!mounted) return;
+              if (!context.mounted) {
+                return;
+              }
               Navigator.pop(context);
             },
             icon: const Icon(Icons.save_alt),
-            label: const Text('Save'),
+            label: const Text("Save"),
           ),
         ],
         centerTitle: true,
         title:
-            Text(widget.id == null ? 'Add a new SSH' : 'Edit the SSH Details'),
+            Text(widget.id == null ? "Add a new SSH" : "Edit the SSH Details"),
       ),
       backgroundColor: Colors.black,
       body: Container(
@@ -86,12 +70,12 @@ class _NewSshState extends State<NewSsh> {
         padding: const EdgeInsets.all(10),
         child: ListView(
           children: [
-            CustomInput('Name', name),
-            CustomInput('Host', host),
-            CustomInput('Port', port, isPort: true),
-            CustomInput('Username', username),
+            CustomInput("Name", name),
+            CustomInput("Host", host),
+            CustomInput("Port", port, isPort: true),
+            CustomInput("Username", username),
             CustomInput(
-              'password',
+              "password",
               password,
               isHide: isHide,
               hiden: Material(
@@ -111,5 +95,29 @@ class _NewSshState extends State<NewSsh> {
         ),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.id != null) {
+      unawaited(loadSshDetails());
+    }
+  }
+
+  Future<void> loadSshDetails() async {
+    final db =
+        await openDatabase(join(await getDatabasesPath(), "my_database.db"));
+    final List<Map<String, dynamic>> maps =
+        await db.query("ssh_details", where: "id = ?", whereArgs: [widget.id]);
+    if (maps.isNotEmpty) {
+      setState(() {
+        name.text = maps[0]["name"];
+        host.text = maps[0]["host"];
+        port.text = maps[0]["port"].toString();
+        username.text = maps[0]["username"];
+        password.text = maps[0]["password"];
+      });
+    }
   }
 }

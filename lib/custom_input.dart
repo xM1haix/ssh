@@ -1,12 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import "package:flutter/material.dart";
+import "package:flutter/services.dart";
 
 class CustomInput extends StatelessWidget {
-  final TextEditingController controller;
-  final String name;
-  final bool isPort;
-  final Widget? hiden;
-  final bool isHide;
   const CustomInput(
     this.name,
     this.controller, {
@@ -15,11 +10,16 @@ class CustomInput extends StatelessWidget {
     this.hiden,
     super.key,
   });
+  final TextEditingController controller;
+  final String name;
+  final bool isPort;
+  final Widget? hiden;
+  final bool isHide;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(8),
       child: TextField(
         obscureText: isHide,
         keyboardType: isPort ? TextInputType.number : null,
