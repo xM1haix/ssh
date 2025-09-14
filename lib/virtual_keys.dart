@@ -1,7 +1,10 @@
 import "package:flutter/material.dart";
 import "package:xterm/xterm.dart";
 
+///Custom class which extends [TerminalInputHandler] with [ChangeNotifier]
+///to create custom keys
 class VirtualKeyboard extends TerminalInputHandler with ChangeNotifier {
+  ///
   VirtualKeyboard(this._inputHandler);
   final TerminalInputHandler _inputHandler;
   var _ctrl = false;
@@ -9,6 +12,8 @@ class VirtualKeyboard extends TerminalInputHandler with ChangeNotifier {
   var _shift = false;
 
   var _alt = false;
+
+  ///ALT Key
   bool get alt => _alt;
   set alt(bool value) {
     if (_alt != value) {
@@ -17,6 +22,7 @@ class VirtualKeyboard extends TerminalInputHandler with ChangeNotifier {
     }
   }
 
+  ///CTRL Key
   bool get ctrl => _ctrl;
   set ctrl(bool value) {
     if (_ctrl != value) {
@@ -25,6 +31,7 @@ class VirtualKeyboard extends TerminalInputHandler with ChangeNotifier {
     }
   }
 
+  ///SHIFT Key
   bool get shift => _shift;
 
   set shift(bool value) {
@@ -34,6 +41,7 @@ class VirtualKeyboard extends TerminalInputHandler with ChangeNotifier {
     }
   }
 
+  ///TAB Key
   bool get tab => _tab;
   set tab(bool value) {
     if (_tab != value) {
@@ -53,8 +61,12 @@ class VirtualKeyboard extends TerminalInputHandler with ChangeNotifier {
       );
 }
 
+///Create a view of the virtual keyboard
 class VirtualKeyboardView extends StatelessWidget {
+  ///Construction of [VirtualKeyboardView]
   const VirtualKeyboardView(this.keyboard, {super.key});
+
+  ///Required the [VirtualKeyboard]
   final VirtualKeyboard keyboard;
   @override
   Widget build(BuildContext context) => AnimatedBuilder(

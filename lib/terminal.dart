@@ -6,7 +6,9 @@ import "package:flutter/material.dart";
 import "package:tefis_tool/virtual_keys.dart";
 import "package:xterm/xterm.dart";
 
+///The Terminal view for the SSH connection
 class TerminalSSH extends StatefulWidget {
+  ///Construction of [TerminalSSH]
   const TerminalSSH(
     this.name,
     this.host,
@@ -15,10 +17,20 @@ class TerminalSSH extends StatefulWidget {
     this.password, {
     super.key,
   });
+
+  ///The [name] of the SSH
   final String name;
+
+  ///The [host] of the SSH
   final String host;
+
+  ///The [username] of the SSH
   final String username;
+
+  ///The [password] of the SSH
   final String password;
+
+  ///The [port] of the SSH
   final int port;
 
   @override

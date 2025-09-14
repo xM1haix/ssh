@@ -8,7 +8,9 @@ import "package:tefis_tool/adaptive.dart";
 import "package:tefis_tool/custom_swtich_list.dart";
 import "package:toast/toast.dart";
 
+///Settings page
 class Settings extends StatefulWidget {
+  ///
   const Settings({Key? key}) : super(key: key);
 
   @override
@@ -19,8 +21,8 @@ class _SettingsState extends State<Settings> {
   var pinUnlockIsHide = true;
   var pinConnectIsHide = true;
   late SharedPreferences prefs;
-  late var touchIdUnlock = false;
-  late var fingerPrint = false;
+  var touchIdUnlock = false;
+  var fingerPrint = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,9 +42,9 @@ class _SettingsState extends State<Settings> {
           children: fingerPrint
               ? [
                   CustomSwitchTile(
-                    const Text("Unlock using fingerprint"),
-                    touchIdUnlock,
-                    (value) async {
+                    title: const Text("Unlock using fingerprint"),
+                    value: touchIdUnlock,
+                    onChanged: ({required value}) async {
                       if (await getFingerPrint()) {
                         setState(() => touchIdUnlock = value);
                         await prefs.setBool("touchIdUnlock", touchIdUnlock);
@@ -60,7 +62,7 @@ class _SettingsState extends State<Settings> {
                     alignment: Alignment.center,
                     padding: EdgeInsets.all(adaptive(15, context)),
                     child: const Text(
-                      "\tFinger print settings not avalibe if the devices is doesn't have the hardware or it has not active finger print!",
+                      """\tFinger print settings not avalibe if the devices is doesn't have the hardware or it has not active finger print!""",
                     ),
                   ),
                 ],

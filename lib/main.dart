@@ -16,7 +16,7 @@ void main() async {
   await openDatabase(
     join(await getDatabasesPath(), "my_database.db"),
     onCreate: (db, version) => db.execute(
-      "CREATE TABLE ssh_details(id INTEGER PRIMARY KEY, name TEXT, host TEXT, port INTEGER, username TEXT, password TEXT, created_at TEXT DEFAULT CURRENT_TIMESTAMP)",
+      """CREATE TABLE ssh_details(id INTEGER PRIMARY KEY, name TEXT, host TEXT, port INTEGER, username TEXT, password TEXT, created_at TEXT DEFAULT CURRENT_TIMESTAMP)""",
     ),
     version: 1,
   );

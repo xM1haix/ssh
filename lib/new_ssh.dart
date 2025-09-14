@@ -5,8 +5,12 @@ import "package:path/path.dart";
 import "package:sqflite/sqflite.dart";
 import "package:tefis_tool/custom_input.dart";
 
+///Page to create a new ssh entry or edit an ssh
 class NewSsh extends StatefulWidget {
+  ///
   const NewSsh({this.id, super.key});
+
+  ///The [id] for the edited ssh
   final int? id;
 
   @override

@@ -1,7 +1,9 @@
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 
+///Reusable widget for TextFeidls
 class CustomInput extends StatelessWidget {
+  ///
   const CustomInput(
     this.name,
     this.controller, {
@@ -10,10 +12,21 @@ class CustomInput extends StatelessWidget {
     this.hiden,
     super.key,
   });
+
+  /// the [TextEditingController]
   final TextEditingController controller;
+
+  /// The [name] releated the the [TextField]
   final String name;
+
+  ///Checks if the [TextField] is for port to set to numbers
   final bool isPort;
+
+  ///Widget suffix for the [TextField] used only for the [IconButton]
+  ///to change the [TextField.obscureText]
   final Widget? hiden;
+
+  ///The [TextField.obscureText]
   final bool isHide;
 
   @override

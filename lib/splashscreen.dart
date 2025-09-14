@@ -8,7 +8,10 @@ import "package:tefis_tool/adaptive.dart";
 import "package:tefis_tool/ssh.dart";
 import "package:toast/toast.dart";
 
+///UI for the splash screen including
+///a locking system and a disable fingerprint
 class SplashScreen extends StatefulWidget {
+  ///
   const SplashScreen({super.key});
   @override
   State<SplashScreen> createState() => _SplashScreenState();

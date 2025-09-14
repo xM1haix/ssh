@@ -8,15 +8,19 @@ import "package:tefis_tool/new_ssh.dart";
 import "package:tefis_tool/settings.dart";
 import "package:tefis_tool/terminal.dart";
 
+///View of all SSH as a [List]
 class SSHList extends StatefulWidget {
-  const SSHList({Key? key}) : super(key: key);
+  ///Construction of the [SSHList]
+  const SSHList({super.key});
 
   @override
   State<SSHList> createState() => _SSHListState();
 }
 
-class Terminals {
-  Terminals({
+///Object representing the [Terminal]
+class Terminal {
+  ///
+  Terminal({
     required this.id,
     required this.name,
     required this.host,
@@ -24,11 +28,23 @@ class Terminals {
     required this.username,
     required this.password,
   });
+
+  ///The [id] of the [Terminal]
   int id;
+
+  ///The [name] of the [Terminal]
   final String name;
+
+  ///The [host] of the [Terminal]
   final String host;
+
+  ///The [port] of the [Terminal]
   final int port;
+
+  ///The [username] of the [Terminal]
   final String username;
+
+  ///The [password] of the [Terminal]
   final String password;
 }
 
@@ -57,7 +73,7 @@ class _SSHListState extends State<SSHList> {
           color: const Color(0xFF121212),
         ),
         padding: EdgeInsets.all(adaptive(10, context)),
-        child: FutureBuilder<List<Terminals>>(
+        child: FutureBuilder<List<Terminal>>(
           future: getAllSshDetails(),
           builder: (context, snapshot) => !snapshot.hasData
               ? const Text("Nothing in here")
@@ -203,13 +219,13 @@ class _SSHListState extends State<SSHList> {
     );
   }
 
-  Future<List<Terminals>> getAllSshDetails() async {
+  Future<List<Terminal>> getAllSshDetails() async {
     final db =
         await openDatabase(join(await getDatabasesPath(), "my_database.db"));
     final List<Map<String, dynamic>> maps = await db.query("ssh_details");
     return List.generate(
       maps.length,
-      (i) => Terminals(
+      (i) => Terminal(
         id: maps[i]["id"],
         name: maps[i]["name"],
         host: maps[i]["host"],
